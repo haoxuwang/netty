@@ -131,6 +131,9 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
             }
         }
 
+        /**
+         * 读事件走这个
+         */
         @Override
         public final void read() {
             final ChannelConfig config = config();

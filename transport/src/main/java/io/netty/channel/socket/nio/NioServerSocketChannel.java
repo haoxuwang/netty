@@ -144,10 +144,12 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
 
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
+        //获取客户端
         SocketChannel ch = SocketUtils.accept(javaChannel());
 
         try {
             if (ch != null) {
+                // 包装成NioSocketChannel
                 buf.add(new NioSocketChannel(this, ch));
                 return 1;
             }

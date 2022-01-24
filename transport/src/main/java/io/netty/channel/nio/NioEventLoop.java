@@ -484,10 +484,12 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 if (ioRatio == 100) {
                     try {
                         if (strategy > 0) {
+                            // select相关
                             processSelectedKeys();
                         }
                     } finally {
                         // Ensure we always run tasks.
+                        //  从taskQueue取出执行
                         ranTasks = runAllTasks();
                     }
                 } else if (strategy > 0) {
@@ -718,6 +720,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
             // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
             // to a spin loop
+            // 连接获取读事件
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
                 unsafe.read();
             }

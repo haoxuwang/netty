@@ -475,11 +475,12 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             }
 
             AbstractChannel.this.eventLoop = eventLoop;
-
+            // inEventLoop判断当前线程是否为线程池中的进程
             if (eventLoop.inEventLoop()) {
                 register0(promise);
             } else {
                 try {
+                    // 这里的execute被重写了
                     eventLoop.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -505,15 +506,18 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     return;
                 }
                 boolean firstRegistration = neverRegistered;
+                // 执行select注册
                 doRegister();
                 neverRegistered = false;
                 registered = true;
 
                 // Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
                 // user may already fire events through the pipeline in the ChannelFutureListener.
+                // 执行pipeline
                 pipeline.invokeHandlerAddedIfNeeded();
 
                 safeSetSuccess(promise);
+                // 执行pipeline
                 pipeline.fireChannelRegistered();
                 // Only fire a channelActive if the channel has never been registered. This prevents firing
                 // multiple channel actives if the channel is deregistered and re-registered.
